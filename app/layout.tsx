@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sarah & Jalyn",
+  title: "S&J Streak",
   description: "Tap in every day to keep the streak going.",
 };
 
