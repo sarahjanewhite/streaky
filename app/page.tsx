@@ -44,93 +44,149 @@ export default function Home() {
   const bothDone = !!state?.meClicked && !!state?.partnerClicked;
 
   return (
-    <main className="wrap">
-      <div className="flame">🔥</div>
-      <div className="count">{state ? state.streak : " "}</div>
-      <div className="label">day streak</div>
+    <main className="screen">
+      <section className="display">
+        <div className="num">{state ? state.streak : " "}</div>
+        <div className="label">Day Streak</div>
+        <div className={`status ${bothDone ? "done" : ""}`}>
+          <span className="dot" />
+          {bothDone ? "Locked in for today" : "Waiting on both of you"}
+        </div>
+      </section>
 
-      <div className="buttons">
-        <PersonButton
+      <section className="actions">
+        <PersonSlot
           name={NAMES.me}
+          accent="var(--accent-me)"
           done={!!state?.meClicked}
           loading={pending === "me"}
           disabled={!state}
           onClick={() => click("me")}
         />
-        <PersonButton
+        <PersonSlot
           name={NAMES.partner}
+          accent="var(--accent-partner)"
           done={!!state?.partnerClicked}
           loading={pending === "partner"}
           disabled={!state}
           onClick={() => click("partner")}
         />
-      </div>
-
-      <div className={`status ${bothDone ? "done" : ""}`}>
-        {bothDone ? "Streak extended for today ✨" : "Waiting for both of you…"}
-      </div>
+      </section>
 
       <style jsx>{`
-        .wrap {
-          min-height: 100vh;
+        .screen {
+          min-height: 100dvh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .display {
+          flex: 1;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 24px;
           text-align: center;
+          padding: 24px;
         }
-        .flame {
-          font-size: 48px;
-          line-height: 1;
-          filter: drop-shadow(0 0 20px rgba(255, 140, 60, 0.5));
-        }
-        .count {
-          font-size: 96px;
+
+        .num {
           font-weight: 800;
-          line-height: 1.1;
-          margin-top: 4px;
-          background: linear-gradient(135deg, #ffd7a8, #ff8fb1);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
+          font-size: clamp(96px, 32vw, 208px);
+          line-height: 0.85;
+          letter-spacing: -0.03em;
+          font-variant-numeric: tabular-nums;
+          text-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+          opacity: 0;
+          animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s forwards;
         }
+
         .label {
-          font-size: 15px;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #c9b6d6;
-          margin-bottom: 48px;
-        }
-        .buttons {
-          display: flex;
-          gap: 16px;
-          width: 100%;
-          max-width: 380px;
-        }
-        .status {
-          margin-top: 32px;
-          font-size: 14px;
-          color: #a892b8;
-          transition: color 0.3s ease;
-        }
-        .status.done {
-          color: #ffb3d1;
+          margin-top: 14px;
+          font-size: 12px;
           font-weight: 600;
+          letter-spacing: 0.4em;
+          text-transform: uppercase;
+          color: rgba(243, 239, 233, 0.55);
+          opacity: 0;
+          animation: rise 0.6s ease 0.2s forwards;
+        }
+
+        .status {
+          margin-top: 30px;
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(243, 239, 233, 0.62);
+          opacity: 0;
+          animation: rise 0.6s ease 0.32s forwards;
+          transition: color 0.4s ease;
+        }
+
+        .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: currentColor;
+          opacity: 0.6;
+        }
+
+        .status.done {
+          color: var(--amber);
+        }
+
+        .status.done .dot {
+          background: var(--amber);
+          opacity: 1;
+          box-shadow: 0 0 10px var(--amber);
+        }
+
+        .actions {
+          display: flex;
+          border-top: 1px solid rgba(243, 239, 233, 0.14);
+          opacity: 0;
+          animation: rise 0.6s ease 0.44s forwards;
+        }
+
+        @keyframes rise {
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .num,
+          .label,
+          .status,
+          .actions {
+            animation: none;
+            opacity: 1;
+          }
         }
       `}</style>
     </main>
   );
 }
 
-function PersonButton({
+function PersonSlot({
   name,
+  accent,
   done,
   loading,
   disabled,
   onClick,
 }: {
   name: string;
+  accent: string;
   done: boolean;
   loading: boolean;
   disabled: boolean;
@@ -138,48 +194,109 @@ function PersonButton({
 }) {
   return (
     <button
-      className={`btn ${done ? "done" : ""}`}
+      className={`slot ${done ? "done" : ""} ${loading ? "loading" : ""}`}
+      style={{ "--accent": accent } as React.CSSProperties}
       onClick={onClick}
       disabled={disabled || done || loading}
     >
-      <span className="check">{done ? "✓" : ""}</span>
       <span className="name">{name}</span>
+      <span className="mark">
+        {done && (
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 12.5L9.5 18L20 6"
+              pathLength="1"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </span>
 
       <style jsx>{`
-        .btn {
+        .slot {
           flex: 1;
-          aspect-ratio: 1;
-          border-radius: 28px;
-          border: 2px solid rgba(255, 255, 255, 0.12);
-          background: rgba(255, 255, 255, 0.06);
-          color: #f5eef7;
-          font-size: 18px;
-          font-weight: 700;
+          min-height: clamp(180px, 28vh, 260px);
+          padding: 20px 12px calc(20px + env(safe-area-inset-bottom));
+          border: none;
+          background: transparent;
+          color: inherit;
+          font-family: inherit;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 16px;
           cursor: pointer;
-          transition: transform 0.12s ease, background 0.25s ease,
-            border-color 0.25s ease, opacity 0.25s ease;
           -webkit-user-select: none;
           user-select: none;
+          transition: background 0.35s ease, color 0.35s ease;
         }
-        .btn:active:not(:disabled) {
-          transform: scale(0.95);
+
+        .slot + .slot {
+          border-left: 1px solid rgba(243, 239, 233, 0.14);
         }
-        .btn:disabled {
+
+        .slot:active:not(:disabled) {
+          background: rgba(243, 239, 233, 0.08);
+        }
+
+        .slot:disabled {
           cursor: default;
         }
-        .btn.done {
-          background: linear-gradient(135deg, #ff8fb1, #ff6b8b);
-          border-color: transparent;
-          color: #2a0f1c;
+
+        .name {
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
         }
-        .check {
-          font-size: 28px;
-          height: 32px;
+
+        .mark {
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .mark svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .mark svg path {
+          stroke: var(--accent);
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          animation: draw 0.4s ease forwards;
+        }
+
+        .slot.done {
+          background: var(--accent);
+          color: #0b0b0c;
+        }
+
+        .slot.done .mark svg path {
+          stroke: #0b0b0c;
+        }
+
+        .slot.loading {
+          opacity: 0.6;
+        }
+
+        @keyframes draw {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .mark svg path {
+            animation: none;
+            stroke-dashoffset: 0;
+          }
         }
       `}</style>
     </button>

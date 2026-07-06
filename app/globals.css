@@ -1,3 +1,16 @@
+:root {
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --ink: #08090c;
+  --amber: #ff8a3d;
+  --ember: #e63d6f;
+  --plum: #2a2044;
+  --paper: #f3efe9;
+
+  --accent-me: var(--amber);
+  --accent-partner: var(--ember);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -9,17 +22,63 @@ body {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  background: radial-gradient(
-      circle at 30% 20%,
-      #3a2360 0%,
-      transparent 55%
-    ),
-    radial-gradient(circle at 80% 80%, #6b1e4f 0%, transparent 50%),
-    #1a1025;
-  color: #f5eef7;
+  font-family: var(--font-display);
+  color: var(--paper);
   min-height: 100vh;
+  min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  background-color: var(--ink);
+  background-image: linear-gradient(
+    128deg,
+    var(--amber) -10%,
+    var(--ember) 32%,
+    var(--plum) 62%,
+    var(--ink) 85%
+  );
+  background-size: 180% 180%;
+  background-position: 0% 0%;
+  animation: drift 22s ease-in-out infinite alternate;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    transparent 0%,
+    rgba(4, 4, 6, 0.55) 60%,
+    rgba(4, 4, 6, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: -10%;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@keyframes drift {
+  0% {
+    background-position: 10% 0%;
+  }
+  100% {
+    background-position: 40% 60%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
 }
