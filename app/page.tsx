@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-// Edit these before you deploy.
 const NAMES = {
-  me: "Me",
-  partner: "Bae",
+  me: "Sarah",
+  partner: "Jalyn",
 };
 
 interface StreakState {
@@ -43,6 +42,14 @@ export default function Home() {
 
   const bothDone = !!state?.meClicked && !!state?.partnerClicked;
 
+  function statusText() {
+    if (!state) return "";
+    if (bothDone) return "You both showed up today";
+    if (state.meClicked) return `Waiting on ${NAMES.partner}`;
+    if (state.partnerClicked) return `Waiting on ${NAMES.me}`;
+    return "Waiting on you two";
+  }
+
   return (
     <main className="screen">
       <section className="display">
@@ -50,7 +57,7 @@ export default function Home() {
         <div className="label">Day Streak</div>
         <div className={`status ${bothDone ? "done" : ""}`}>
           <span className="dot" />
-          {bothDone ? "Locked in for today" : "Waiting on both of you"}
+          {statusText()}
         </div>
       </section>
 
