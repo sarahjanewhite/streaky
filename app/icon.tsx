@@ -6,7 +6,7 @@ export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
 const GRADIENT =
-  "linear-gradient(135deg, #ff8a3d -10%, #e63d6f 45%, #2a2044 100%)";
+  "linear-gradient(135deg, #ff8a3d 0%, #e63d6f 45%, #2a2044 100%)";
 
 export default async function Icon() {
   const font = await loadDisplayFont();
@@ -20,6 +20,7 @@ export default async function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          backgroundColor: "#2a2044",
           backgroundImage: GRADIENT,
           color: "#f3efe9",
           fontFamily: font ? "Arimo" : undefined,

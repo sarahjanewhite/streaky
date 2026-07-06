@@ -8,7 +8,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const GRADIENT =
-  "linear-gradient(128deg, #ff8a3d -10%, #e63d6f 32%, #2a2044 62%, #08090c 85%)";
+  "linear-gradient(128deg, #ff8a3d 0%, #e63d6f 32%, #2a2044 62%, #08090c 85%)";
 
 export default async function Image() {
   const [state, font] = await Promise.all([

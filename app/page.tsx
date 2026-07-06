@@ -227,7 +227,7 @@ function PersonSlot({
           min-height: clamp(180px, 28vh, 260px);
           padding: 20px 12px calc(20px + env(safe-area-inset-bottom));
           border: none;
-          background: transparent;
+          background: var(--panel);
           color: inherit;
           font-family: inherit;
           display: flex;
