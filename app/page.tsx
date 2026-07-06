@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <main className="screen">
       <section className="display">
-        <div className="num">{state ? state.streak : " "}</div>
+        <div className="num">{state ? state.streak : " "}</div>
         <div className="label">Day Streak</div>
         <div className={`status ${bothDone ? "done" : ""}`}>
           <span className="dot" />
@@ -61,18 +61,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="actions">
-        <PersonSlot
+      <section className="buttons">
+        <PersonButton
           name={NAMES.me}
-          accent="var(--accent-me)"
           done={!!state?.meClicked}
           loading={pending === "me"}
           disabled={!state}
           onClick={() => click("me")}
         />
-        <PersonSlot
+        <PersonButton
           name={NAMES.partner}
-          accent="var(--accent-partner)"
           done={!!state?.partnerClicked}
           loading={pending === "partner"}
           disabled={!state}
@@ -143,18 +141,23 @@ export default function Home() {
         }
 
         .status.done {
-          color: var(--amber);
+          color: var(--paper);
         }
 
         .status.done .dot {
-          background: var(--amber);
+          background: var(--paper);
           opacity: 1;
-          box-shadow: 0 0 10px var(--amber);
+          box-shadow: 0 0 10px rgba(243, 239, 233, 0.7);
         }
 
-        .actions {
+        .buttons {
           display: flex;
-          border-top: 1px solid rgba(243, 239, 233, 0.14);
+          justify-content: center;
+          gap: 14px;
+          width: 100%;
+          max-width: 420px;
+          margin: 0 auto;
+          padding: 0 24px calc(28px + env(safe-area-inset-bottom));
           opacity: 0;
           animation: rise 0.6s ease 0.44s forwards;
         }
@@ -174,7 +177,7 @@ export default function Home() {
           .num,
           .label,
           .status,
-          .actions {
+          .buttons {
             animation: none;
             opacity: 1;
           }
@@ -184,16 +187,14 @@ export default function Home() {
   );
 }
 
-function PersonSlot({
+function PersonButton({
   name,
-  accent,
   done,
   loading,
   disabled,
   onClick,
 }: {
   name: string;
-  accent: string;
   done: boolean;
   loading: boolean;
   disabled: boolean;
@@ -201,14 +202,13 @@ function PersonSlot({
 }) {
   return (
     <button
-      className={`slot ${done ? "done" : ""} ${loading ? "loading" : ""}`}
-      style={{ "--accent": accent } as React.CSSProperties}
+      className={`pill ${done ? "done" : ""} ${loading ? "loading" : ""}`}
       onClick={onClick}
       disabled={disabled || done || loading}
     >
       <span className="name">{name}</span>
-      <span className="mark">
-        {done && (
+      {done && (
+        <span className="mark">
           <svg viewBox="0 0 24 24" fill="none">
             <path
               d="M4 12.5L9.5 18L20 6"
@@ -218,54 +218,55 @@ function PersonSlot({
               strokeLinejoin="round"
             />
           </svg>
-        )}
-      </span>
+        </span>
+      )}
 
       <style jsx>{`
-        .slot {
+        .pill {
           flex: 1;
-          min-height: clamp(180px, 28vh, 260px);
-          padding: 20px 12px calc(20px + env(safe-area-inset-bottom));
-          border: none;
-          background: transparent;
-          color: inherit;
-          font-family: inherit;
           display: flex;
-          flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 16px;
+          gap: 8px;
+          padding: 17px 20px;
+          border-radius: 999px;
+          border: 1.5px solid rgba(243, 239, 233, 0.3);
+          background: transparent;
+          color: var(--paper);
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
           cursor: pointer;
           -webkit-user-select: none;
           user-select: none;
-          transition: background 0.35s ease, color 0.35s ease;
+          transition: background 0.3s ease, border-color 0.3s ease,
+            color 0.3s ease, transform 0.15s ease;
         }
 
-        .slot + .slot {
-          border-left: 1px solid rgba(243, 239, 233, 0.14);
+        .pill:active:not(:disabled) {
+          transform: scale(0.96);
         }
 
-        .slot:active:not(:disabled) {
-          background: rgba(243, 239, 233, 0.08);
-        }
-
-        .slot:disabled {
+        .pill:disabled {
           cursor: default;
         }
 
-        .name {
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
+        .pill.done {
+          background: var(--paper);
+          border-color: transparent;
+          color: var(--ink);
+        }
+
+        .pill.loading {
+          opacity: 0.6;
         }
 
         .mark {
-          width: 30px;
-          height: 30px;
+          width: 15px;
+          height: 15px;
           display: flex;
-          align-items: center;
-          justify-content: center;
         }
 
         .mark svg {
@@ -274,23 +275,10 @@ function PersonSlot({
         }
 
         .mark svg path {
-          stroke: var(--accent);
+          stroke: var(--ink);
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
           animation: draw 0.4s ease forwards;
-        }
-
-        .slot.done {
-          background: var(--accent);
-          color: #0b0b0c;
-        }
-
-        .slot.done .mark svg path {
-          stroke: #0b0b0c;
-        }
-
-        .slot.loading {
-          opacity: 0.6;
         }
 
         @keyframes draw {
