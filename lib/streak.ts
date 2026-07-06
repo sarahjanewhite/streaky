@@ -21,8 +21,17 @@ const initialState: StreakState = {
   partnerClicked: false,
 };
 
-function todayUTC(): string {
-  return new Date().toISOString().slice(0, 10);
+const DAY_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+// Returns today's date (YYYY-MM-DD) as seen in US Eastern time, so the day
+// boundary is midnight Eastern regardless of DST or where the server runs.
+function todayEastern(): string {
+  return DAY_FORMATTER.format(new Date());
 }
 
 function daysBetween(a: string, b: string): number {
@@ -64,7 +73,7 @@ function rollForward(state: StreakState, today: string): StreakState {
 
 export async function getState(): Promise<StreakState> {
   const stored = (await kv.get<StreakState>(KEY)) ?? initialState;
-  const today = todayUTC();
+  const today = todayEastern();
   const rolled = rollForward(stored, today);
   if (rolled !== stored) {
     await kv.set(KEY, rolled);
@@ -74,7 +83,7 @@ export async function getState(): Promise<StreakState> {
 
 export async function registerClick(person: Person): Promise<StreakState> {
   const stored = (await kv.get<StreakState>(KEY)) ?? initialState;
-  const today = todayUTC();
+  const today = todayEastern();
   let state = rollForward(stored, today);
 
   state = {
